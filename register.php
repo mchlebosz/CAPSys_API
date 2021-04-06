@@ -22,8 +22,6 @@ $query = "INSERT INTO accounts (username, mail, password) VALUES (?, ?, ?)";
 $stmt = $connection->prepare($query);
 $stmt->bind_param('sss', $data->username, $data->mail, password_hash($data->password, PASSWORD_BCRYPT));
 
-echo password_hash("admin", PASSWORD_BCRYPT);
-
 if ($stmt->execute()) {
 
     http_response_code(200);
