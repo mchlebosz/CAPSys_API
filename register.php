@@ -35,7 +35,7 @@ $stmt = $connection->prepare($query);
 $stmt->bind_param('ssss', $data->username, $data->mail, password_hash($data->password, PASSWORD_BCRYPT), $data->role);
 
 if ($stmt->execute()) {
-
+// TODO: Return userID
     http_response_code(200);
     echo json_encode(array("message" => "User registered."));
 
