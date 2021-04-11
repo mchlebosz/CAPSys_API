@@ -27,35 +27,49 @@ $connection = $db->createConnection();
 
 $data = json_decode(file_get_contents("php://input"));
 
-$name = $data->username;
-$address = $data->address;
-$city = $data->city;
-$country = $data->country;
-$principalID = $data->principalID;
-$photo = $data->photo;
-$description = $data->description;
-$typeID = $data->typeID;
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+if ($school_id != null) {
+    $query = "UPDATE schools
+    SET prinicpalUserId = ?,
+        name            = ?,
+        idType          = ?,
+        address         = ?,
+        city            = ?,
+        country         = ?,
+        photo           = ?,
+        description     = ?
+    WHERE idSchool = ?;";
 
-$query = "INSERT INTO schools (prinicpalUserId, name, idType, address, city, country, photo, description)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+    $stmt = $connection->prepare($query);
+    $stmt->bind_param("isisssssi", $data->principal_id, $data->name, $data->type_id, $data->address, $data->city, $data->country, $data->photo, $data->description, $data->school_id);
 
-$stmt = $connection->prepare($query);
-$stmt->bind_param("isisssss", $principalID, $name, $typeID, $address, $city, $county, $photo, $description);
+    if ($stmt->execute()) {
 
-if ($principalID = "" || $name = "" || $typeID = "" || $city = "" || $county = "") {
-    http_response_code(400);
-    echo json_encode(array("message" => "Incorrect body content. Missing reuqired values"));
-    exit();
-}
+        http_response_code(200);
+        echo json_encode(array("message" => "School updated."));
+    } else {
 
-// TODO: nie mam pojęcia czeny fejluje xDDD
-if ($stmt->execute()) {
-
-    http_response_code(200);
-    echo json_encode(array("message" => "School added.", "id" => $stmp->insert_id));
+        http_response_code(500);
+        echo json_encode(array("message" => "Updating school failed."));
+    }
 } else {
+    print($principalID);
+    $query = "INSERT INTO schools (prinicpalUserId, name, idType, address, city, country, photo, description)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
-    http_response_code(500);
-    echo json_encode(array("message" => "Adding school failed."));
+    $stmt = $connection->prepare($query);
+    $stmt->bind_param("isisssss", $data->principal_id, $data->name, $data->type_id, $data->address, $data->city, $data->country, $data->photo, $data->description);
+
+    if ($principalID = "" || $name = "" || $typeID = "" || $city = "" || $county = "") {
+        http_response_code(400);
+        echo json_encode(array("message" => "Incorrect body content. Missing reuqired values"));
+        exit();
+    }
+
+    if ($stmt->execute()) {
+        http_response_code(200);
+        echo json_encode(array("message" => "School added.", "id" => $stmt->insert_id));
+    } else {
+        http_response_code(500);
+        echo json_encode(array("message" => "Adding school failed."));
+    }
 }
