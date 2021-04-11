@@ -25,7 +25,7 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
 $db = new Database;
 $connection = $db->createConnection();
 
-$school_id = $_GET["id"];
+$school_id = $_GET["school_id"];
 
 if ($school_id == null) {
     $query = "SELECT s.idSchool,
@@ -71,7 +71,8 @@ $num = $result->num_rows;
 if ($num > 1) {
     $output = [];
     while ($row = $result->fetch_assoc()) {
-        $temp = ["id" => $row["idSchool"], "name" => $row["name"], "type" => $row["type_name"], "principal" => ["id" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]], "address" => ["street" => $row["address"], "city" => $row["city"], "country" => $row["country"]], "description" => $row["description"], "photo" => $row["photo"]];
+        $temp = ["id" => $row["idSchool"], "name" => $row["name"], "type" => $row["type_name"], "principal" => ["id" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]], "addre
+        ss" => ["street" => $row["address"], "city" => $row["city"], "country" => $row["country"]], "description" => $row["description"], "photo" => $row["photo"]];
 
         array_push($output, $temp);
     }
