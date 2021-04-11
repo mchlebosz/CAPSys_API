@@ -93,40 +93,82 @@ $num = $result->num_rows;
 if ($num > 1) {
     $output = [];
     $current_recrutation = null;
+    $rows = [];
     while ($row = $result->fetch_assoc()) {
         if ($row["idRecrutation"] != $current_recrutation) {
             ($current_recrutation != null ? array_push($output, $temp) : null);
+            array_push($rows, $row["idRecrutation"]);
             $current_recrutation = $row["idRecrutation"];
             $temp = ["idRecrutation" => $row["idRecrutation"], "idSchool" => $row["idSchool"], "courseStart" => $row["CourseStart"], "CourseEnd" => $row["CourseEnd"], "recrutationStart" => $row["RecrutationStart"], "recrutationEnd" => $row["RecrutationEnd"], "vacancies" => $row["vacancies"], "requirements" => [], "students" => [["idUser" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]]]];
+            if ($temp["students"]["idUser"] == null) {
+                $temp["students"] = [];
+            }
         } else {
             array_push($temp["students"], ["idUser" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]]);
         }
     }
     array_push($output, $temp);
 
+    foreach ($rows as $recrutationID) {
+        $key = array_search($recrutationID, array_column($output, 'idRecrutation'));
 
-    
+        $req = $connection->prepare("SELECT r.idRecrutation, description
+        FROM recrutation r
+                 left JOIN recrutationRequerements rr ON r.idRecrutation = rr.idRecrutation
+        where rr.idRecrutation = ?
+        GROUP BY 2");
+        $req->bind_param("i", $recrutationID);
+        $req->execute();
+        $req_result = $req->get_result();
+
+        while ($row = $req_result->fetch_assoc()) {
+            array_push($output[$key]["requirements"], $row["description"]);
+        }
+    }
+
+
+
+
+
 
     http_response_code(200);
     print json_encode($output);
 } else if ($num == 1) {
     $output = [];
     $first_row = true;
+    $rows = [];
     while ($row = $result->fetch_assoc()) {
         if ($first_row) {
-           $first_row = true;
+            $first_row = false;
+            array_push($rows, $row["idRecrutation"]);
             $output = ["idRecrutation" => $row["idRecrutation"], "idSchool" => $row["idSchool"], "courseStart" => $row["CourseStart"], "CourseEnd" => $row["CourseEnd"], "recrutationStart" => $row["RecrutationStart"], "recrutationEnd" => $row["RecrutationEnd"], "vacancies" => $row["vacancies"], "requirements" => [], "students" => [["idUser" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]]]];
+            if ($output["students"]["idUser"] == null) {
+                $output["students"] = [];
+            }
         } else {
             array_push($output["students"], ["idUser" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]]);
         }
     }
 
+    foreach ($rows as $recrutationID) {
+        $key = array_search($recrutationID, array_column($output, 'idRecrutation'));
+
+        $req = $connection->prepare("SELECT r.idRecrutation, description
+        FROM recrutation r
+                 left JOIN recrutationRequerements rr ON r.idRecrutation = rr.idRecrutation
+        where rr.idRecrutation = ?
+        GROUP BY 2");
+        $req->bind_param("i", $recrutationID);
+        $req->execute();
+        $req_result = $req->get_result();
+
+        while ($row = $req_result->fetch_assoc()) {
+            array_push($output[$key]["requirements"], $row["description"]);
+        }
+    }
+
     http_response_code(200);
     print json_encode($output);
-
-
-    http_response_code(200);
-    print json_encode($row);
 } else {
     http_response_code(404);
     echo json_encode(array("message" => "Course not found."));
