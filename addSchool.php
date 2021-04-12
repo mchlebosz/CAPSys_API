@@ -27,7 +27,7 @@ $connection = $db->createConnection();
 
 $data = json_decode(file_get_contents("php://input"));
 
-if ($school_id != null) {
+if ($data->school_id != null) {
     $query = "UPDATE schools
     SET prinicpalUserId = ?,
         name            = ?,
@@ -52,18 +52,12 @@ if ($school_id != null) {
         echo json_encode(array("message" => "Updating school failed."));
     }
 } else {
-    print($principalID);
     $query = "INSERT INTO schools (prinicpalUserId, name, idType, address, city, country, photo, description)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
     $stmt = $connection->prepare($query);
     $stmt->bind_param("isisssss", $data->principal_id, $data->name, $data->type_id, $data->address, $data->city, $data->country, $data->photo, $data->description);
 
-    if ($principalID = "" || $name = "" || $typeID = "" || $city = "" || $county = "") {
-        http_response_code(400);
-        echo json_encode(array("message" => "Incorrect body content. Missing reuqired values"));
-        exit();
-    }
 
     if ($stmt->execute()) {
         http_response_code(200);

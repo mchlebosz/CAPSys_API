@@ -31,6 +31,7 @@ if ($school_id == null) {
     $query = "SELECT s.idSchool,
     s.name,
     st.name as 'type_name',
+    st.idType,
     u.idUser,
     u.firstname,
     u.lastname,
@@ -47,6 +48,7 @@ FROM schools s
     $query = "SELECT s.idSchool,
     s.name,
     st.name as 'type_name',
+    st.idType,
     u.idUser,
     u.firstname,
     u.lastname,
@@ -71,7 +73,7 @@ $num = $result->num_rows;
 if ($num > 1) {
     $output = [];
     while ($row = $result->fetch_assoc()) {
-        $temp = ["id" => $row["idSchool"], "name" => $row["name"], "type" => $row["type_name"], "principal" => ["id" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]], "address" => ["street" => $row["address"], "city" => $row["city"], "country" => $row["country"]], "description" => $row["description"], "photo" => $row["photo"]];
+        $temp = ["id" => $row["idSchool"], "name" => $row["name"], "type" => $row["type_name"], "type_id" => $row["idType"], "principal" => ["id" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]], "address" => ["street" => $row["address"], "city" => $row["city"], "country" => $row["country"]], "description" => $row["description"], "photo" => $row["photo"]];
 
         array_push($output, $temp);
     }
@@ -80,7 +82,7 @@ if ($num > 1) {
     print json_encode($output);
 } else if ($num == 1) {
     $row = $result->fetch_assoc();
-    $output = ["id" => $row["idSchool"], "name" => $row["name"], "type" => $row["type_name"], "principal" => ["id" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]], "address" => ["street" => $row["address"], "city" => $row["city"], "country" => $row["country"]], "description" => $row["description"], "photo" => $row["photo"]];
+    $output = ["id" => $row["idSchool"], "name" => $row["name"], "type" => $row["type_name"], "type_id" => $row["idType"],"principal" => ["id" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]], "address" => ["street" => $row["address"], "city" => $row["city"], "country" => $row["country"]], "description" => $row["description"], "photo" => $row["photo"]];
 
     http_response_code(200);
     print json_encode($output);

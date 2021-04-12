@@ -31,6 +31,8 @@ $course_id = $_GET["course_id"];
 if ($school_id == null && $course_id == null) {
     $query = 'SELECT r.idRecrutation,
     c.idSchool,
+    c.programme AS "CourseName",
+    c.programmeDescription AS "CourseDescription",
     c.startDate AS "CourseStart",
     c.endDate   AS "CourseEnd",
     r.startDate AS "RecrutationStart",
@@ -48,6 +50,8 @@ group by idUser;';
 } else if ($course_id != null) {
     $query = 'SELECT r.idRecrutation,
     c.idSchool,
+    c.programme AS "CourseName",
+    c.programmeDescription AS "CourseDescription",
     c.startDate AS "CourseStart",
     c.endDate   AS "CourseEnd",
     r.startDate AS "RecrutationStart",
@@ -67,6 +71,8 @@ group by idUser;';
 } else {
     $query = 'SELECT r.idRecrutation,
     c.idSchool,
+    c.programme AS "CourseName",
+    c.programmeDescription AS "CourseDescription",
     c.startDate AS "CourseStart",
     c.endDate   AS "CourseEnd",
     r.startDate AS "RecrutationStart",
@@ -99,7 +105,7 @@ if ($num > 1) {
             ($current_recrutation != null ? array_push($output, $temp) : null);
             array_push($rows, $row["idRecrutation"]);
             $current_recrutation = $row["idRecrutation"];
-            $temp = ["idRecrutation" => $row["idRecrutation"], "idSchool" => $row["idSchool"], "courseStart" => $row["CourseStart"], "CourseEnd" => $row["CourseEnd"], "recrutationStart" => $row["RecrutationStart"], "recrutationEnd" => $row["RecrutationEnd"], "vacancies" => $row["vacancies"], "requirements" => [], "students" => [["idUser" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]]]];
+            $temp = ["idRecrutation" => $row["idRecrutation"], "idSchool" => $row["idSchool"], "courseName" => $row["CourseName"], "courseDescription" => $row["CourseDescription"],"courseStart" => $row["CourseStart"], "CourseEnd" => $row["CourseEnd"], "recrutationStart" => $row["RecrutationStart"], "recrutationEnd" => $row["RecrutationEnd"], "vacancies" => $row["vacancies"], "requirements" => [], "students" => [["idUser" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]]]];
             if ($temp["students"]["idUser"] == null) {
                 $temp["students"] = [];
             }
@@ -141,7 +147,7 @@ if ($num > 1) {
         if ($first_row) {
             $first_row = false;
             array_push($rows, $row["idRecrutation"]);
-            $output = ["idRecrutation" => $row["idRecrutation"], "idSchool" => $row["idSchool"], "courseStart" => $row["CourseStart"], "CourseEnd" => $row["CourseEnd"], "recrutationStart" => $row["RecrutationStart"], "recrutationEnd" => $row["RecrutationEnd"], "vacancies" => $row["vacancies"], "requirements" => [], "students" => [["idUser" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]]]];
+            $output = ["idRecrutation" => $row["idRecrutation"], "courseName" => $row["CourseName"], "courseDescription" => $row["CourseDescription"], "idSchool" => $row["idSchool"], "courseStart" => $row["CourseStart"], "CourseEnd" => $row["CourseEnd"], "recrutationStart" => $row["RecrutationStart"], "recrutationEnd" => $row["RecrutationEnd"], "vacancies" => $row["vacancies"], "requirements" => [], "students" => [["idUser" => $row["idUser"], "firstname" => $row["firstname"], "lastname" => $row["lastname"]]]];
             if ($output["students"]["idUser"] == null) {
                 $output["students"] = [];
             }
