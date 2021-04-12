@@ -4,8 +4,6 @@
 
 This is a API for Capsys by [mchlebosz](https://github.com/mchlebosz)
 
-To check full repo [repo](https://github.com/mchlebosz/CAPSys_API)
-
 
 ## Get started
 
